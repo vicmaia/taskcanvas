@@ -1,0 +1,89 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  text-align: center;
+  padding: 2rem;
+}
+
+.add-task {
+  margin-bottom: 1rem;
+}
+
+.add-task input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 200px;
+  margin-right: 0.5rem;
+}
+
+.add-task button {
+  padding: 0.5rem 1rem;
+  background: #28a745;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.add-task button:hover {
+  background: #218838;
+}
+
+.board {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.column {
+  background: #fff;
+  padding: 1rem;
+  width: 250px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-height: 200px;
+}
+
+.column h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.task {
+  background: #0077ff;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.delete-btn:hover {
+  color: #ff4d4d;
+}
+
+.task:active {
+  cursor: grabbing;
+}

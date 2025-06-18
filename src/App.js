@@ -1,0 +1,131 @@
+import React, { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import axios from "axios";
+import "./App.css";
+
+const API_URL = "http://localhost:4000/tasks";
+
+function App() {
+  const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });
+  const [newTaskText, setNewTaskText] = useState("");
+
+  useEffect(() => {
+    axios.get(API_URL).then((res) => {
+      const grouped = { todo: [], doing: [], done: [] };
+      res.data.forEach((task) => {
+        grouped[task.status].push(task);
+      });
+      setTasks(grouped);
+    });
+  }, []);
+
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+
+    const sourceList = Array.from(tasks[source.droppableId]);
+    const [movedTask] = sourceList.splice(source.index, 1);
+    const destList = Array.from(tasks[destination.droppableId]);
+    movedTask.status = destination.droppableId;
+    destList.splice(destination.index, 0, movedTask);
+
+    setTasks({
+      ...tasks,
+      [source.droppableId]: sourceList,
+      [destination.droppableId]: destList
+    });
+
+    axios.patch(`${API_URL}/${movedTask.id}`, {
+      status: movedTask.status
+    });
+  };
+
+  const addTask = () => {
+    if (!newTaskText.trim()) return;
+    axios
+      .post(API_URL, {
+        text: newTaskText.trim(),
+        status: "todo"
+      })
+      .then((res) => {
+        setTasks((prev) => ({
+          ...prev,
+          todo: [...prev.todo, res.data]
+        }));
+        setNewTaskText("");
+      });
+  };
+
+  const deleteTask = (taskId, status) => {
+    axios.delete(`${API_URL}/${taskId}`).then(() => {
+      setTasks((prev) => ({
+        ...prev,
+        [status]: prev[status].filter((t) => t.id !== taskId)
+      }));
+    });
+  };
+
+  const columns = [
+    { id: "todo", title: "To Do" },
+    { id: "doing", title: "In Progress" },
+    { id: "done", title: "Completed" }
+  ];
+
+  return (
+    <div className="App">
+      <h1>TaskCanvas</h1>
+
+      <div className="add-task">
+        <input
+          type="text"
+          placeholder="New task"
+          value={newTaskText}
+          onChange={(e) => setNewTaskText(e.target.value)}
+        />
+        <button onClick={addTask}>Add</button>
+      </div>
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="board">
+          {columns.map((column) => (
+            <Droppable droppableId={column.id} key={column.id}>
+              {(provided) => (
+                <div
+                  className="column"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  <h2>{column.title}</h2>
+                  {tasks[column.id].map((task, index) => (
+                    <Draggable draggableId={task.id} index={index} key={task.id}>
+                      {(provided) => (
+                        <div
+                          className="task"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <span>{task.text}</span>
+                          <button
+                            className="delete-btn"
+                            onClick={() => deleteTask(task.id, column.id)}
+                            title="Delete task"
+                          >
+                            ❌
+                          </button>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          ))}
+        </div>
+      </DragDropContext>
+    </div>
+  );
+}
+
+export default App;
