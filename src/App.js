@@ -6,9 +6,11 @@ import "./App.css";
 const API_URL = "http://localhost:4000/tasks";
 
 function App() {
+   // State to store tasks grouped by status
   const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });
   const [newTaskText, setNewTaskText] = useState("");
 
+  // Fetch tasks on component mount
   useEffect(() => {
     axios.get(API_URL).then((res) => {
       const grouped = { todo: [], doing: [], done: [] };
@@ -19,6 +21,7 @@ function App() {
     });
   }, []);
 
+  // Handle drag and drop between columns
   const onDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
@@ -35,11 +38,13 @@ function App() {
       [destination.droppableId]: destList
     });
 
+    // Persist status change to backend
     axios.patch(`${API_URL}/${movedTask._id}`, {
       status: movedTask.status
     });
   };
 
+   // Add new task to "todo" column
   const addTask = () => {
     if (!newTaskText.trim()) return;
     axios
@@ -56,6 +61,7 @@ function App() {
       });
   };
 
+   // Delete task by ID and remove from local state
   const deleteTask = (taskId, status) => {
     axios.delete(`${API_URL}/${taskId}`).then(() => {
       setTasks((prev) => ({
