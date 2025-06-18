@@ -3,8 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import "./App.css";
 
-const API_URL = "http://localhost:4000/tasks";
-const AI_URL = "http://localhost:4000/ai/suggest";
+const BASE_URL = "http://localhost:4000";
 
 function App() {
    // State to store tasks grouped by status
@@ -14,7 +13,7 @@ function App() {
 
   // Fetch tasks on component mount
   useEffect(() => {
-    axios.get(API_URL).then((res) => {
+    axios.get(`${BASE_URL}/tasks`).then((res) => {
       const grouped = { todo: [], doing: [], done: [] };
       res.data.forEach((task) => {
         grouped[task.status].push(task);
@@ -41,7 +40,7 @@ function App() {
     });
 
     // Persist status change to backend
-    axios.patch(`${API_URL}/${movedTask._id}`, {
+    axios.patch(`${BASE_URL}/tasks/${movedTask._id}`, {
       status: movedTask.status
     });
   };
@@ -50,7 +49,7 @@ function App() {
   const addTask = () => {
     if (!newTaskText.trim()) return;
     axios
-      .post(API_URL, {
+      .post(`${BASE_URL}/tasks`, {
         text: newTaskText.trim(),
         status: "todo"
       })
@@ -65,7 +64,7 @@ function App() {
 
   // Delete task by ID and remove from local state
   const deleteTask = (taskId, status) => {
-    axios.delete(`${API_URL}/${taskId}`).then(() => {
+    axios.delete(`${BASE_URL}/tasks/${taskId}`).then(() => {
       setTasks((prev) => ({
         ...prev,
         [status]: prev[status].filter((t) => t._id !== taskId)
@@ -77,7 +76,7 @@ function App() {
   const getAiSuggestion = () => {
     const allTasks = [...tasks.todo, ...tasks.doing, ...tasks.done];
     axios
-      .post(AI_URL, { tasks: allTasks })
+      .post(`${BASE_URL}/ai/suggest`, { tasks: allTasks })
       .then((res) => setAiSuggestion(res.data.suggestion))
       .catch(() => setAiSuggestion("Could not fetch suggestion right now."));
   };
