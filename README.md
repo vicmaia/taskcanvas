@@ -67,9 +67,7 @@ taskcanvas/
 │   ├── App.css
 │   └── index.js
 ├── public/
-│   └── index.html
-taskcanvas-api/
-└── index.js
+    └── index.html
 ```
 
 ---
