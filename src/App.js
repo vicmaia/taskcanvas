@@ -35,7 +35,7 @@ function App() {
       [destination.droppableId]: destList
     });
 
-    axios.patch(`${API_URL}/${movedTask.id}`, {
+    axios.patch(`${API_URL}/${movedTask._id}`, {
       status: movedTask.status
     });
   };
@@ -60,7 +60,7 @@ function App() {
     axios.delete(`${API_URL}/${taskId}`).then(() => {
       setTasks((prev) => ({
         ...prev,
-        [status]: prev[status].filter((t) => t.id !== taskId)
+        [status]: prev[status].filter((t) => t._id !== taskId)
       }));
     });
   };
@@ -97,7 +97,7 @@ function App() {
                 >
                   <h2>{column.title}</h2>
                   {tasks[column.id].map((task, index) => (
-                    <Draggable draggableId={task.id} index={index} key={task.id}>
+                    <Draggable draggableId={task._id} index={index} key={task._id}>
                       {(provided) => (
                         <div
                           className="task"
@@ -108,7 +108,7 @@ function App() {
                           <span>{task.text}</span>
                           <button
                             className="delete-btn"
-                            onClick={() => deleteTask(task.id, column.id)}
+                            onClick={() => deleteTask(task._id, column.id)}
                             title="Delete task"
                           >
                             ❌

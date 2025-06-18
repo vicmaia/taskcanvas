@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# ESLint cache
+.eslintcache
+
+# Vite/Webpack/Babel cache
+.cache/
+*.pack
