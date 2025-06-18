@@ -4,11 +4,13 @@ import axios from "axios";
 import "./App.css";
 
 const API_URL = "http://localhost:4000/tasks";
+const AI_URL = "http://localhost:4000/ai/suggest";
 
 function App() {
    // State to store tasks grouped by status
   const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });
   const [newTaskText, setNewTaskText] = useState("");
+  const [aiSuggestion, setAiSuggestion] = useState("");
 
   // Fetch tasks on component mount
   useEffect(() => {
@@ -44,7 +46,7 @@ function App() {
     });
   };
 
-   // Add new task to "todo" column
+  // Add new task to "todo" column
   const addTask = () => {
     if (!newTaskText.trim()) return;
     axios
@@ -61,7 +63,7 @@ function App() {
       });
   };
 
-   // Delete task by ID and remove from local state
+  // Delete task by ID and remove from local state
   const deleteTask = (taskId, status) => {
     axios.delete(`${API_URL}/${taskId}`).then(() => {
       setTasks((prev) => ({
@@ -69,6 +71,15 @@ function App() {
         [status]: prev[status].filter((t) => t._id !== taskId)
       }));
     });
+  };
+
+  // Get AI suggestion
+  const getAiSuggestion = () => {
+    const allTasks = [...tasks.todo, ...tasks.doing, ...tasks.done];
+    axios
+      .post(AI_URL, { tasks: allTasks })
+      .then((res) => setAiSuggestion(res.data.suggestion))
+      .catch(() => setAiSuggestion("Could not fetch suggestion right now."));
   };
 
   const columns = [
@@ -89,6 +100,12 @@ function App() {
           onChange={(e) => setNewTaskText(e.target.value)}
         />
         <button onClick={addTask}>Add</button>
+        <button className="suggest-btn" onClick={getAiSuggestion}>🤖 Suggest Task</button>
+        {aiSuggestion && (
+          <div className="ai-suggestion">
+            <p>{aiSuggestion}</p>
+          </div>
+        )}
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
