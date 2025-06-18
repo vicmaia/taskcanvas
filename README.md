@@ -1,4 +1,4 @@
-# 📌 TaskCanvas
+# TaskCanvas
 
 **TaskCanvas** is a lightweight visual task board built with React, Tailwind-style CSS, and drag-and-drop support using `react-beautiful-dnd`. It allows users to visually organize tasks across "To Do", "In Progress", and "Completed" columns — mimicking real-world kanban flows.
 
@@ -6,27 +6,27 @@ This project was designed as a **fast, clean, and fully interactive prototype**,
 
 ---
 
-## ✨ Features
+## Features
 
-- 🧩 **Drag and drop** task movement across columns (powered by `react-beautiful-dnd`)
-- ➕ **Create new tasks** dynamically via input
-- ❌ **Delete tasks** with a single click
-- 🔄 **Status syncing** between UI and API
-- 🧠 Clean, readable codebase using functional React components and hooks
-- 🌐 Connected to a lightweight Express API (can be replaced by any backend)
+- **Drag and drop** task movement across columns (powered by `react-beautiful-dnd`)
+- **Create new tasks** dynamically via input
+- **Delete tasks** with a single click
+- **Status syncing** between UI and database (MongoDB Atlas)
+- Clean, readable codebase using functional React components and hooks
+- Connected to a persistent backend (Node.js + Express + MongoDB)
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 - **Frontend:** React 18, Axios, CSS (with Tailwind-inspired styling)
 - **Drag and Drop:** `react-beautiful-dnd`
-- **Backend:** Node.js, Express (in-memory task store, ready for DB swap)
-- **Build Tool:** Create React App (Vite-compatible)
+- **Backend:** Node.js, Express, MongoDB Atlas via Mongoose
+- **Build Tool:** Create React App
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the frontend
 
@@ -49,7 +49,7 @@ The frontend runs at `http://localhost:3000` and connects to the API at `http://
 
 ---
 
-## 📦 API Endpoints
+## API Endpoints
 
 - `GET /tasks` – fetch all tasks
 - `POST /tasks` – create new task (`text`, `status`)
@@ -58,7 +58,7 @@ The frontend runs at `http://localhost:3000` and connects to the API at `http://
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 taskcanvas/
@@ -72,6 +72,6 @@ taskcanvas/
 
 ---
 
-## 💬 About the Project
+## About the Project
 
 TaskCanvas was built as a **proof-of-concept for visual task manipulation**, ideal for teams seeking a simplified UI for planning, prototyping, or onboarding. Inspired by tools like Linear, Trello, and Tempo, it focuses on **clean code, real-time feedback, and rapid iteration**.
