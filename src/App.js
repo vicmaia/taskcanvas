@@ -3,26 +3,26 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import "./App.css";
 
+//The base URL for calling the backend API.
 const BASE_URL = "http://localhost:4000";
 
 function App() {
-   // State to store tasks grouped by status
-  const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });
-  const [newTaskText, setNewTaskText] = useState("");
-  const [aiSuggestion, setAiSuggestion] = useState("");
+  const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });  // Grouped task state
+  const [newTaskText, setNewTaskText] = useState("");                     // New task input
+  const [aiSuggestion, setAiSuggestion] = useState("");                   // AI suggestion
 
-  // Fetch tasks on component mount
+  // Fetch tasks from API on page load
   useEffect(() => {
     axios.get(`${BASE_URL}/tasks`).then((res) => {
       const grouped = { todo: [], doing: [], done: [] };
       res.data.forEach((task) => {
-        grouped[task.status].push(task);
+        grouped[task.status].push(task);      // Group tasks by status
       });
       setTasks(grouped);
     });
   }, []);
 
-  // Handle drag and drop between columns
+  // Handle drag and drop
   const onDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
@@ -39,13 +39,13 @@ function App() {
       [destination.droppableId]: destList
     });
 
-    // Persist status change to backend
+    // Save new status to backend
     axios.patch(`${BASE_URL}/tasks/${movedTask._id}`, {
       status: movedTask.status
     });
   };
 
-  // Add new task to "todo" column
+  // Add a new task to "todo" column
   const addTask = () => {
     if (!newTaskText.trim()) return;
     axios
@@ -58,11 +58,11 @@ function App() {
           ...prev,
           todo: [...prev.todo, res.data]
         }));
-        setNewTaskText("");
+        setNewTaskText("");   // Clear input
       });
   };
 
-  // Delete task by ID and remove from local state
+  // Delete a task by ID
   const deleteTask = (taskId, status) => {
     axios.delete(`${BASE_URL}/tasks/${taskId}`).then(() => {
       setTasks((prev) => ({
@@ -72,7 +72,7 @@ function App() {
     });
   };
 
-  // Get AI suggestion
+  // Call the AI suggestion endpoint
   const getAiSuggestion = () => {
     const allTasks = [...tasks.todo, ...tasks.doing, ...tasks.done];
     axios
@@ -81,6 +81,7 @@ function App() {
       .catch(() => setAiSuggestion("Could not fetch suggestion right now."));
   };
 
+  // Column titles
   const columns = [
     { id: "todo", title: "To Do" },
     { id: "doing", title: "In Progress" },
@@ -91,6 +92,7 @@ function App() {
     <div className="App">
       <h1>TaskCanvas</h1>
 
+      {/* Input and buttons */}
       <div className="add-task">
         <input
           type="text"
@@ -99,7 +101,9 @@ function App() {
           onChange={(e) => setNewTaskText(e.target.value)}
         />
         <button onClick={addTask}>Add</button>
-        <button className="suggest-btn" onClick={getAiSuggestion}>🤖 Suggest Task</button>
+        <button className="suggest-btn" onClick={getAiSuggestion}>
+          Suggest Task
+        </button>
         {aiSuggestion && (
           <div className="ai-suggestion">
             <p>{aiSuggestion}</p>
@@ -107,6 +111,7 @@ function App() {
         )}
       </div>
 
+      {/* Task columns */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="board">
           {columns.map((column) => (
@@ -131,7 +136,6 @@ function App() {
                           <button
                             className="delete-btn"
                             onClick={() => deleteTask(task._id, column.id)}
-                            title="Delete task"
                           >
                             ❌
                           </button>
