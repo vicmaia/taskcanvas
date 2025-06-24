@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import "./App.css";
 
-//The base URL for calling the backend API.
+//The base URL for calling the backend API
 const BASE_URL = "http://localhost:4000";
 
 function App() {
